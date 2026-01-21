@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Home - ERVHS-EARIST Recommendation System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-compass"></i> Find Your Perfect Program
+        </h1>
+        <p class="lead mb-4">
+            Rule-Based Intelligent Program Recommendation System for ERVHS Students Enrolling at EARIST
+        </p>
+        <a href="{{ url_for('questionnaire') }}" class="btn btn-light btn-lg">
+            <i class="fas fa-play-circle"></i> Start Questionnaire
+        </a>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Smart Matching</h5>
+                    <p class="card-text">
+                        Our rule-based system analyzes your skills, interests, and academic background to recommend the best EARIST programs for you.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-transparent fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Transparent Decisions</h5>
+                    <p class="card-text">
+                        Every recommendation comes with clear justifications explaining why a program is suitable for your profile.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-university fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">EARIST Programs</h5>
+                    <p class="card-text">
+                        Get recommendations from 15+ undergraduate programs across Engineering, Business, Education, and Technology.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row">
+            <div class="col-md-3 mb-4 text-center">
+                <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <h3 class="mb-0">1</h3>
+                </div>
+                <h5>Answer Questions</h5>
+                <p class="text-muted">Complete a short questionnaire about your strand, skills, and interests</p>
+            </div>
+            
+            <div class="col-md-3 mb-4 text-center">
+                <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <h3 class="mb-0">2</h3>
+                </div>
+                <h5>System Analysis</h5>
+                <p class="text-muted">Our rule-based engine processes your profile against validated criteria</p>
+            </div>
+            
+            <div class="col-md-3 mb-4 text-center">
+                <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <h3 class="mb-0">3</h3>
+                </div>
+                <h5>Get Recommendations</h5>
+                <p class="text-muted">Receive top 3-5 program recommendations ranked by suitability</p>
+            </div>
+            
+            <div class="col-md-3 mb-4 text-center">
+                <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <h3 class="mb-0">4</h3>
+                </div>
+                <h5>Make Decisions</h5>
+                <p class="text-muted">Use insights to make informed college program choices</p>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('questionnaire') }}" class="btn btn-primary btn-lg">
+                Get Started Now
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="container my-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">About This System</h2>
+            <p>
+                The ERVHS-EARIST Program Recommendation System is a rule-based intelligent system designed to help Senior High School students from Eulogio Rodriguez Vocational High School (ERVHS) make informed decisions about college programs at EARIST.
+            </p>
+            <p>
+                Unlike traditional personality tests, our system uses deterministic rules based on validated data from guidance counselors, curriculum analysis, and educational experts to provide transparent, defensible recommendations.
+            </p>
+            <p>
+                This system was developed as part of a Bachelor of Science in Computer Science thesis project at EARIST.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body p-4">
+                    <h4 class="card-title">System Features</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle"></i> 30+ validated recommendation rules</li>
+                        <li class="mb-2"><i class="fas fa-check-circle"></i> 15+ EARIST program coverage</li>
+                        <li class="mb-2"><i class="fas fa-check-circle"></i> All 7 SHS strands supported</li>
+                        <li class="mb-2"><i class="fas fa-check-circle"></i> Confidence scoring for each recommendation</li>
+                        <li class="mb-2"><i class="fas fa-check-circle"></i> Detailed justifications provided</li>
+                        <li class="mb-2"><i class="fas fa-check-circle"></i> PDF report generation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

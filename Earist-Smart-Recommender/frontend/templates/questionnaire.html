@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}Questionnaire - ERVHS-EARIST System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .questionnaire-section {
+        display: none;
+    }
+    .questionnaire-section.active {
+        display: block;
+    }
+    .skill-rating {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .skill-rating input[type="radio"] {
+        display: none;
+    }
+    .skill-rating label {
+        padding: 8px 16px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .skill-rating input[type="radio"]:checked + label {
+        background-color: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+    }
+    .progress-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+    }
+    .progress-step.active .step-circle {
+        background-color: #0d6efd;
+        color: white;
+    }
+    .progress-step.completed .step-circle {
+        background-color: #198754;
+        color: white;
+    }
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        color: #6c757d;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-clipboard-list"></i> Student Questionnaire</h3>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Progress Indicator -->
+                    <div class="d-flex mb-4" id="progressIndicator">
+                        <div class="progress-step active" data-section="1">
+                            <div class="step-circle">1</div>
+                            <small>Personal</small>
+                        </div>
+                        <div class="progress-step" data-section="2">
+                            <div class="step-circle">2</div>
+                            <small>Academics</small>
+                        </div>
+                        <div class="progress-step" data-section="3">
+                            <div class="step-circle">3</div>
+                            <small>Skills</small>
+                        </div>
+                        <div class="progress-step" data-section="4">
+                            <div class="step-circle">4</div>
+                            <small>Interests</small>
+                        </div>
+                        <div class="progress-step" data-section="5">
+                            <div class="step-circle">5</div>
+                            <small>Preferences</small>
+                        </div>
+                    </div>
+
+                    <form id="questionnaireForm">
+                        <!-- Section 1: Personal Information -->
+                        <div class="questionnaire-section active" id="section1">
+                            <h4 class="mb-4">Section A: Personal Information</h4>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" name="student_name" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Grade Level *</label>
+                                    <select class="form-select" name="grade_level" required>
+                                        <option value="">Select Grade</option>
+                                        <option value="11">Grade 11</option>
+                                        <option value="12">Grade 12</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Senior High School Strand *</label>
+                                    <select class="form-select" name="strand" required>
+                                        <option value="">Select Strand</option>
+                                        <option value="STEM">STEM</option>
+                                        <option value="ABM">ABM</option>
+                                        <option value="HUMSS">HUMSS</option>
+                                        <option value="GAS">GAS</option>
+                                        <option value="TVL-ICT">TVL-ICT</option>
+                                        <option value="TVL-HE">TVL-HE (Home Economics)</option>
+                                        <option value="TVL-IA">TVL-IA (Industrial Arts)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Email (Optional)</label>
+                                <input type="email" class="form-control" name="email">
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Academic Background -->
+                        <div class="questionnaire-section" id="section2">
+                            <h4 class="mb-4">Section B: Academic Background</h4>
+                            <p class="text-muted">Select your top 3 favorite subjects:</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Mathematics">
+                                        <label class="form-check-label">Mathematics</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Science">
+                                        <label class="form-check-label">Science (Physics/Chemistry/Biology)</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="English/Filipino">
+                                        <label class="form-check-label">English/Filipino</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Accounting">
+                                        <label class="form-check-label">Accounting</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Programming/ICT">
+                                        <label class="form-check-label">Programming/ICT</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Business Subjects">
+                                        <label class="form-check-label">Business Subjects</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Social Sciences">
+                                        <label class="form-check-label">Social Sciences</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Arts/Creative Writing">
+                                        <label class="form-check-label">Arts/Creative Writing</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Practical/Technical Subjects">
+                                        <label class="form-check-label">Practical/Technical Subjects</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input subject-checkbox" type="checkbox" name="favorite_subjects" value="Research Methods">
+                                        <label class="form-check-label">Research Methods</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="text-danger d-none" id="subjectError">Please select at least 1 and at most 3 subjects</small>
+                        </div>
+
+                        <!-- Section 3: Skills Assessment -->
+                        <div class="questionnaire-section" id="section3">
+                            <h4 class="mb-4">Section C: Skills Self-Assessment</h4>
+                            <p class="text-muted">Rate your proficiency (1=Poor, 5=Excellent):</p>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Analytical Thinking (solving complex problems)</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_analytical" value="1" id="analytical1" required>
+                                    <label for="analytical1">1</label>
+                                    <input type="radio" name="skill_analytical" value="2" id="analytical2">
+                                    <label for="analytical2">2</label>
+                                    <input type="radio" name="skill_analytical" value="3" id="analytical3">
+                                    <label for="analytical3">3</label>
+                                    <input type="radio" name="skill_analytical" value="4" id="analytical4">
+                                    <label for="analytical4">4</label>
+                                    <input type="radio" name="skill_analytical" value="5" id="analytical5">
+                                    <label for="analytical5">5</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Technical Skills (computers, machines, tools)</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_technical" value="1" id="technical1" required>
+                                    <label for="technical1">1</label>
+                                    <input type="radio" name="skill_technical" value="2" id="technical2">
+                                    <label for="technical2">2</label>
+                                    <input type="radio" name="skill_technical" value="3" id="technical3">
+                                    <label for="technical3">3</label>
+                                    <input type="radio" name="skill_technical" value="4" id="technical4">
+                                    <label for="technical4">4</label>
+                                    <input type="radio" name="skill_technical" value="5" id="technical5">
+                                    <label for="technical5">5</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Communication (speaking, writing)</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_communication" value="1" id="communication1" required>
+                                    <label for="communication1">1</label>
+                                    <input type="radio" name="skill_communication" value="2" id="communication2">
+                                    <label for="communication2">2</label>
+                                    <input type="radio" name="skill_communication" value="3" id="communication3">
+                                    <label for="communication3">3</label>
+                                    <input type="radio" name="skill_communication" value="4" id="communication4">
+                                    <label for="communication4">4</label>
+                                    <input type="radio" name="skill_communication" value="5" id="communication5">
+                                    <label for="communication5">5</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Creativity (design, arts, innovation)</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_creativity" value="1" id="creativity1" required>
+                                    <label for="creativity1">1</label>
+                                    <input type="radio" name="skill_creativity" value="2" id="creativity2">
+                                    <label for="creativity2">2</label>
+                                    <input type="radio" name="skill_creativity" value="3" id="creativity3">
+                                    <label for="creativity3">3</label>
+                                    <input type="radio" name="skill_creativity" value="4" id="creativity4">
+                                    <label for="creativity4">4</label>
+                                    <input type="radio" name="skill_creativity" value="5" id="creativity5">
+                                    <label for="creativity5">5</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Numerical/Mathematical Skills</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_numerical" value="1" id="numerical1" required>
+                                    <label for="numerical1">1</label>
+                                    <input type="radio" name="skill_numerical" value="2" id="numerical2">
+                                    <label for="numerical2">2</label>
+                                    <input type="radio" name="skill_numerical" value="3" id="numerical3">
+                                    <label for="numerical3">3</label>
+                                    <input type="radio" name="skill_numerical" value="4" id="numerical4">
+                                    <label for="numerical4">4</label>
+                                    <input type="radio" name="skill_numerical" value="5" id="numerical5">
+                                    <label for="numerical5">5</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Leadership and Organization</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_leadership" value="1" id="leadership1" required>
+                                    <label for="leadership1">1</label>
+                                    <input type="radio" name="skill_leadership" value="2" id="leadership2">
+                                    <label for="leadership2">2</label>
+                                    <input type="radio" name="skill_leadership" value="3" id="leadership3">
+                                    <label for="leadership3">3</label>
+                                    <input type="radio" name="skill_leadership" value="4" id="leadership4">
+                                    <label for="leadership4">4</label>
+                                    <input type="radio" name="skill_leadership" value="5" id="leadership5">
+                                    <label for="leadership5">5</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Attention to Detail</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_attention_to_detail" value="1" id="detail1" required>
+                                    <label for="detail1">1</label>
+                                    <input type="radio" name="skill_attention_to_detail" value="2" id="detail2">
+                                    <label for="detail2">2</label>
+                                    <input type="radio" name="skill_attention_to_detail" value="3" id="detail3">
+                                    <label for="detail3">3</label>
+                                    <input type="radio" name="skill_attention_to_detail" value="4" id="detail4">
+                                    <label for="detail4">4</label>
+                                    <input type="radio" name="skill_attention_to_detail" value="5" id="detail5">
+                                    <label for="detail5">5</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Research and Investigation</label>
+                                <div class="skill-rating">
+                                    <input type="radio" name="skill_research" value="1" id="research1" required>
+                                    <label for="research1">1</label>
+                                    <input type="radio" name="skill_research" value="2" id="research2">
+                                    <label for="research2">2</label>
+                                    <input type="radio" name="skill_research" value="3" id="research3">
+                                    <label for="research3">3</label>
+                                    <input type="radio" name="skill_research" value="4" id="research4">
+                                    <label for="research4">4</label>
+                                    <input type="radio" name="skill_research" value="5" id="research5">
+                                    <label for="research5">5</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Interests -->
+                        <div class="questionnaire-section" id="section4">
+                            <h4 class="mb-4">Section D: Interest Areas</h4>
+                            <p class="text-muted">Select all that apply:</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Technology">
+                                        <label class="form-check-label">Technology and Computer Science</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Engineering">
+                                        <label class="form-check-label">Engineering and Applied Sciences</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Business">
+                                        <label class="form-check-label">Business and Entrepreneurship</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Education">
+                                        <label class="form-check-label">Education and Teaching</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Healthcare">
+                                        <label class="form-check-label">Healthcare and Medicine</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Social Services">
+                                        <label class="form-check-label">Social Services and Community Work</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Arts">
+                                        <label class="form-check-label">Arts, Media, and Design</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Research">
+                                        <label class="form-check-label">Research and Development</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Management">
+                                        <label class="form-check-label">Management and Administration</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="interests" value="Hospitality">
+                                        <label class="form-check-label">Hospitality and Food Industry</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 5: Preferences -->
+                        <div class="questionnaire-section" id="section5">
+                            <h4 class="mb-4">Section E & F: Learning Style and Career Goals</h4>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Learning Style Preference *</label>
+                                <select class="form-select" name="learning_style" required>
+                                    <option value="">Select Learning Style</option>
+                                    <option value="Hands-on/Practical learning">Hands-on/Practical learning</option>
+                                    <option value="Theoretical/Conceptual learning">Theoretical/Conceptual learning</option>
+                                    <option value="Collaborative/Group work">Collaborative/Group work</option>
+                                    <option value="Independent/Research-based learning">Independent/Research-based learning</option>
+                                    <option value="Visual/Creative learning">Visual/Creative learning</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Do you have a specific career in mind?</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="career_goal_specified" value="true" id="careerYes">
+                                    <label class="form-check-label" for="careerYes">Yes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="career_goal_specified" value="false" id="careerNo" checked>
+                                    <label class="form-check-label" for="careerNo">No</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4" id="careerDescriptionDiv" style="display: none;">
+                                <label class="form-label">If yes, briefly describe:</label>
+                                <textarea class="form-control" name="career_goal_description" rows="2"></textarea>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">What matters most to you in choosing a program?</label>
+                                <select class="form-select" name="career_priority">
+                                    <option value="">Select Priority</option>
+                                    <option value="Job opportunities">Job opportunities</option>
+                                    <option value="Personal interest">Personal interest</option>
+                                    <option value="Earning potential">Earning potential</option>
+                                    <option value="Family expectations">Family expectations</option>
+                                    <option value="Helping others">Helping others</option>
+                                    <option value="Innovation and creativity">Innovation and creativity</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" id="prevBtn" disabled>
+                                <i class="fas fa-arrow-left"></i> Previous
+                            </button>
+                            <button type="button" class="btn btn-primary" id="nextBtn">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button type="submit" class="btn btn-success d-none" id="submitBtn">
+                                <i class="fas fa-paper-plane"></i> Submit & Get Recommendations
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center py-5">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Processing Your Profile...</h5>
+                <p class="text-muted">Analyzing your responses and generating recommendations</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/questionnaire.js') }}"></script>
+{% endblock %}

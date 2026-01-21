@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Your Recommendations - ERVHS-EARIST System{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-star text-warning"></i> Your Program Recommendations
+                </h1>
+                <p class="lead text-muted">Based on your profile, here are the best EARIST programs for you</p>
+            </div>
+
+            {% if recommendations %}
+                {% for rec in recommendations %}
+                <div class="card mb-4 shadow-sm recommendation-card">
+                    <div class="card-header bg-{% if rec.rank == 1 %}warning{% elif rec.rank == 2 %}info{% else %}secondary{% endif %} text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">
+                                <span class="badge bg-white text-dark">#{{ rec.rank }}</span>
+                                {{ rec.program.program_name }}
+                            </h4>
+                            <span class="badge bg-white text-dark">{{ "%.1f"|format(rec.confidence) }}% Match</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="text-primary">{{ rec.program.program_code }}</h5>
+                                <p class="mb-3">{{ rec.program.program_description }}</p>
+                                
+                                <div class="alert alert-light border">
+                                    <h6 class="fw-bold mb-2"><i class="fas fa-lightbulb text-warning"></i> Why This Program?</h6>
+                                    <p class="mb-0">{{ rec.justification }}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="fw-bold"><i class="fas fa-briefcase text-success"></i> Career Pathways:</h6>
+                                    <p class="text-muted mb-0">{{ rec.program.career_pathways }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6 class="mb-3">Confidence Score</h6>
+                                    <div class="progress" style="height: 30px;">
+                                        <div class="progress-bar {% if rec.confidence >= 90 %}bg-success{% elif rec.confidence >= 80 %}bg-info{% else %}bg-warning{% endif %}" 
+                                             role="progressbar" 
+                                             style="width: {{ rec.confidence }}%"
+                                             aria-valuenow="{{ rec.confidence }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ "%.1f"|format(rec.confidence) }}%
+                                        </div>
+                                    </div>
+                                    <p class="mt-3 text-muted small">
+                                        <i class="fas fa-info-circle"></i> 
+                                        {% if rec.confidence >= 90 %}
+                                            Excellent Match
+                                        {% elif rec.confidence >= 80 %}
+                                            Very Good Match
+                                        {% else %}
+                                            Good Match
+                                        {% endif %}
+                                    </p>
+                                    
+                                    <div class="mt-4">
+                                        <h6>Was this helpful?</h6>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-success feedback-btn" data-id="{{ rec.recommendation_id }}" data-feedback="helpful">
+                                                <i class="fas fa-thumbs-up"></i> Yes
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger feedback-btn" data-id="{{ rec.recommendation_id }}" data-feedback="not_helpful">
+                                                <i class="fas fa-thumbs-down"></i> No
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="text-center mt-5">
+                    <a href="/api/download-report/{{ response_id }}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-file-pdf"></i> Download PDF Report
+                    </a>
+                    <a href="{{ url_for('programs') }}" class="btn btn-outline-primary btn-lg me-3">
+                        <i class="fas fa-university"></i> View All Programs
+                    </a>
+                    <a href="{{ url_for('questionnaire') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-redo"></i> Take Again
+                    </a>
+                </div>
+
+                <div class="alert alert-info mt-5">
+                    <h5 class="alert-heading"><i class="fas fa-info-circle"></i> Next Steps</h5>
+                    <ul class="mb-0">
+                        <li>Review each recommended program carefully</li>
+                        <li>Schedule a meeting with your guidance counselor to discuss these recommendations</li>
+                        <li>Visit the EARIST campus to learn more about your top choices</li>
+                        <li>Consider your personal goals, family expectations, and career aspirations</li>
+                        <li>Remember: These are recommendations, the final decision is yours!</li>
+                    </ul>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">No Recommendations Found</h4>
+                    <p>We couldn't generate recommendations based on your responses. Please try again or contact support.</p>
+                    <hr>
+                    <a href="{{ url_for('questionnaire') }}" class="btn btn-warning">Take Questionnaire Again</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.feedback-btn').click(function() {
+        const recommendationId = $(this).data('id');
+        const feedback = $(this).data('feedback');
+        
+        $.ajax({
+            url: '/api/feedback',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                recommendation_id: recommendationId,
+                feedback: feedback
+            }),
+            success: function() {
+                alert('Thank you for your feedback!');
+                $(this).prop('disabled', true);
+            }.bind(this),
+            error: function() {
+                alert('Error submitting feedback. Please try again.');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

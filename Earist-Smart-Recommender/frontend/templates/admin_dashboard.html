@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - ERVHS-EARIST System{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
+            <p class="text-muted">System overview and statistics</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-users"></i> Total Students</h5>
+                    <h2 class="display-4">{{ total_students }}</h2>
+                    <p class="mb-0">Registered in system</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-clipboard-check"></i> Completed Responses</h5>
+                    <h2 class="display-4">{{ total_responses }}</h2>
+                    <p class="mb-0">Questionnaires submitted</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-star"></i> Recommendations</h5>
+                    <h2 class="display-4">{{ total_recommendations }}</h2>
+                    <p class="mb-0">Generated recommendations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <a href="{{ url_for('admin_students') }}" class="text-decoration-none">
+                <div class="card bg-light h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h5>View Students</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <a href="{{ url_for('admin_responses') }}" class="text-decoration-none">
+                <div class="card bg-light h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clipboard-list fa-3x text-success mb-3"></i>
+                        <h5>View Responses</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <a href="{{ url_for('admin_rules') }}" class="text-decoration-none">
+                <div class="card bg-light h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-cogs fa-3x text-warning mb-3"></i>
+                        <h5>Manage Rules</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <a href="{{ url_for('admin_analytics') }}" class="text-decoration-none">
+                <div class="card bg-light h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-3x text-info mb-3"></i>
+                        <h5>View Analytics</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Students -->
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0"><i class="fas fa-clock"></i> Recent Students</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Grade</th>
+                            <th>Strand</th>
+                            <th>Registered</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in recent_students %}
+                        <tr>
+                            <td>{{ student.student_id }}</td>
+                            <td>{{ student.student_name }}</td>
+                            <td>{{ student.grade_level }}</td>
+                            <td><span class="badge bg-primary">{{ student.strand }}</span></td>
+                            <td>{{ student.date_registered.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <span class="badge bg-{% if student.status == 'completed' %}success{% elif student.status == 'active' %}warning{% else %}secondary{% endif %}">
+                                    {{ student.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strand Distribution -->
+    <div class="card mt-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Student Distribution by Strand</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="strandChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Strand Distribution Chart
+const ctx = document.getElementById('strandChart').getContext('2d');
+const strandData = {
+    labels: [
+        {% for strand, count in strand_stats %}
+            '{{ strand }}',
+        {% endfor %}
+    ],
+    datasets: [{
+        label: 'Number of Students',
+        data: [
+            {% for strand, count in strand_stats %}
+                {{ count }},
+            {% endfor %}
+        ],
+        backgroundColor: [
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)',
+            'rgba(255, 159, 64, 0.7)',
+            'rgba(199, 199, 199, 0.7)'
+        ]
+    }]
+};
+
+const strandChart = new Chart(ctx, {
+    type: 'bar',
+    data: strandData,
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

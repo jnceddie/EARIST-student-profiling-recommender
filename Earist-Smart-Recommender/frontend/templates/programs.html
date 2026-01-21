@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Programs - ERVHS-EARIST System{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">EARIST Programs</h1>
+        <p class="lead text-muted">Explore the undergraduate programs offered at EARIST</p>
+    </div>
+
+    <div class="row">
+        {% for program in programs %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">{{ program.program_code }}</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-title">{{ program.program_name }}</h6>
+                    <p class="card-text text-muted small">{{ program.program_description }}</p>
+                    
+                    <div class="mt-3">
+                        <p class="mb-1"><strong><i class="fas fa-building"></i> College:</strong></p>
+                        <p class="small text-muted">{{ program.college_department }}</p>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <p class="mb-1"><strong><i class="fas fa-clock"></i> Duration:</strong></p>
+                        <p class="small text-muted">{{ program.program_duration }}</p>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <p class="mb-1"><strong><i class="fas fa-briefcase"></i> Careers:</strong></p>
+                        <p class="small text-muted">{{ program.career_pathways[:100] }}...</p>
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <button class="btn btn-sm btn-outline-primary view-details-btn" 
+                            data-code="{{ program.program_code }}">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Program Details Modal -->
+<div class="modal fade" id="programModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalProgramName"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="text-primary" id="modalProgramCode"></h6>
+                <p id="modalProgramDescription"></p>
+                
+                <hr>
+                
+                <h6><i class="fas fa-building text-primary"></i> College Department</h6>
+                <p id="modalCollege"></p>
+                
+                <h6><i class="fas fa-briefcase text-success"></i> Career Pathways</h6>
+                <p id="modalCareers"></p>
+                
+                <h6><i class="fas fa-clock text-warning"></i> Program Duration</h6>
+                <p id="modalDuration"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('questionnaire') }}" class="btn btn-primary">Take Questionnaire</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.view-details-btn').click(function() {
+        const programCode = $(this).data('code');
+        
+        $.ajax({
+            url: '/api/programs/' + programCode,
+            method: 'GET',
+            success: function(data) {
+                $('#modalProgramCode').text(data.program_code);
+                $('#modalProgramName').text(data.program_name);
+                $('#modalProgramDescription').text(data.description);
+                $('#modalCollege').text(data.college);
+                $('#modalCareers').text(data.career_pathways);
+                $('#modalDuration').text(data.duration);
+                
+                $('#programModal').modal('show');
+            },
+            error: function() {
+                alert('Error loading program details.');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
